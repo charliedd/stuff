@@ -9,7 +9,7 @@ public class Percolation {
 	
 	public Percolation(int n){
 	   N= n;
-	   sites = 1;
+	   sites = 0;
 	   
 	   uf = new WeightedQuickUnionUF(n*n + 2);
 	   tile = new byte[n*n];  
@@ -23,7 +23,7 @@ public class Percolation {
 	}
 	
 	private void connectTop(){
-		System.out.println(N);
+		//System.out.println(N);
 		for (int i = 0; i < N ; i++){
 			uf.union(top, i);
 		}
@@ -48,7 +48,10 @@ public class Percolation {
 		if (!validate(targetTile))
 			return;
 		
-		if (tile[targetTile] == 0)tile[targetTile] = 1;
+		if (tile[targetTile] == 0){
+			sites++;
+			tile[targetTile] = 1;
+		}
 		else return;
 		
 		int topTile = encode(row-1,col);
@@ -63,7 +66,7 @@ public class Percolation {
 		if(col == N ) rightTile = -1;
 		else  rightTile = encode(row,col+1);
 		
-		System.out.println("target: "+targetTile+"Top: "+topTile +" Bot" + botTile+ " left" + leftTile + "right: " +rightTile);
+		//System.out.println("target: "+targetTile+"Top: "+topTile +" Bot" + botTile+ " left" + leftTile + "right: " +rightTile);
 		
 		if(validate(topTile) && tile[topTile] != 0){
 			uf.union(targetTile, topTile);
@@ -125,27 +128,5 @@ public class Percolation {
 		return i*N + j; 
 	}
 	
-	public String toString(){
-		String perc = "";
-		
-		for (int i = 0; i < N*N; i++){
-			switch (tile[i]){
-				case 0:
-					perc += "X";
-					break;
-				case 1:
-					perc += "O";
-					break;
-				case 2:
-					perc += "F";
-					break;
-			}
-			if (i != 0 && ((i+1) % N == 0))perc += "\n";
-		}
-		return perc;
-	}
 	
-	public String printuf(){
-		return uf.toString();
-	}
 }
