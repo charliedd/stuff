@@ -1,8 +1,8 @@
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 	private int N;
     private int top;
-    private int bottom;
     private WeightedQuickUnionUF uf;
     private byte[] tile; // 0 - closed site, 1 - open site, 2 - full site;
     private int sites;
@@ -14,10 +14,11 @@ public class Percolation {
 	   uf = new WeightedQuickUnionUF(n*n + 2);
 	   tile = new byte[n*n];  
 	   
-	   for(byte t : tile )t = 0;
+	   for(int i= 0 ; i < n*n; i++){
+		   tile[i] = 0;
+	   }
 	   
 	   top = n*n ;
-	   bottom = n*n + 1;
 	   
 	   connectTop();
 	}
@@ -102,7 +103,7 @@ public class Percolation {
 	
 	public boolean isOpen(int row, int col){
 		// is site (row, col) open?
-		return 1 == tile[encode(row,col)];
+		return 0 != tile[encode(row,col)] ;
 	}
 	public boolean isFull(int row, int col){
 		// is site (row, col) full?

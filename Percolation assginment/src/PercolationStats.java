@@ -1,19 +1,16 @@
 
-import java.util.Arrays;
 
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
 	private double[] results;
-	private int trials;
 	private double confidenceHi, confidenceLo, mean,dev,confidence;
 	
 	
 	   public PercolationStats(int n, int trials) {
 		   // perform trials independent experiments on an n-by-n grid
 		   results = new double[trials];
-		   this.trials = trials;
 		   int row,col;
 		   
 		   
@@ -52,10 +49,10 @@ public class PercolationStats {
 
 	   public static void main(String[] args){
 		   // test client (described below)
-		   //int N = Integer.parseInt(args[0]);
-	       //int T = Integer.parseInt(args[1]);
+		   int N = Integer.parseInt(args[0]);
+	       int T = Integer.parseInt(args[1]);
 		   
-	       PercolationStats stats = new PercolationStats(10, 10);
+	       PercolationStats stats = new PercolationStats(N, T);
 	       System.out.println("mean                    = " + stats.mean());
 	       System.out.println("stddev                  = " + stats.stddev());
 	       System.out.println("95% confidence interval = " + stats.confidenceLo() + ", " + stats.confidenceHi());
