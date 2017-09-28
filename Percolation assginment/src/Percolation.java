@@ -19,15 +19,17 @@ public class Percolation {
 	   top = n*n ;
 	   bottom = n*n + 1;
 	   
-	   connectTopBot();
+	   connectTop();
 	}
 	
-	private void connectTopBot(){
-		for (int i = 0; i < N ; i++)
+	private void connectTop(){
+		System.out.println(N);
+		for (int i = 0; i < N ; i++){
 			uf.union(top, i);
+		}
 			
-		for (int i = N*N -1; i >= 2*N;i--)
-			uf.union(bottom, i);
+		
+			
 	
 	}
 	
@@ -39,6 +41,8 @@ public class Percolation {
 	    }
 	
 	public void open(int row, int col){
+		//if(percolates())return;
+		
 		int targetTile = encode(row,col);
 		
 		if (!validate(targetTile))
@@ -49,8 +53,17 @@ public class Percolation {
 		
 		int topTile = encode(row-1,col);
 		int botTile = encode(row+1,col);
-		int leftTile = encode(row,col-1);
-		int rightTile = encode(row,col+1);
+		
+		int leftTile;
+		int rightTile;
+		
+		if (col == 1) leftTile = -1 ;
+		else leftTile = encode(row,col-1);
+		
+		if(col == N ) rightTile = -1;
+		else  rightTile = encode(row,col+1);
+		
+		System.out.println("target: "+targetTile+"Top: "+topTile +" Bot" + botTile+ " left" + leftTile + "right: " +rightTile);
 		
 		if(validate(topTile) && tile[topTile] != 0){
 			uf.union(targetTile, topTile);
@@ -69,7 +82,13 @@ public class Percolation {
 		}
 		
 		
-		if(uf.connected(targetTile, top))tile[targetTile] = 2;
+		for(int i = 0; i < tile.length; i++){
+			if(tile[i] == 1){
+				if(uf.connected(top, i) ){
+					tile[i] = 2;
+				}
+			}
+		}
 		
 		// open site (row, col) if it is not open already
 		//if ()
@@ -92,7 +111,12 @@ public class Percolation {
 	}
 	public boolean percolates(){
 		// does the system percolate?
-		return uf.connected(top, bottom);
+		for (int i = N*N -1; i >= (N-1)*N;i--){
+			if(uf.connected(top, i))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	private int encode(int i, int j){
