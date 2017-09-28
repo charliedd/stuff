@@ -62,7 +62,7 @@ public class PercolationVisualizer {
     }
 
     public static void main(String[] args) {
-        In in = new In("C:\\Users\\Carlos\\Downloads\\percolation-testing\\percolation\\snake101.txt");      // input file
+        In in = new In("C:\\Users\\Carlos\\Downloads\\percolation-testing\\percolation\\input2.txt");      // input file
         int n = in.readInt();         // n-by-n percolation system
 
         // turn on animation mode
@@ -72,7 +72,7 @@ public class PercolationVisualizer {
         Percolation perc = new Percolation(n);
         draw(perc, n);
         StdDraw.show();
-        StdDraw.pause(DELAY);
+        //StdDraw.pause(DELAY);
         while (!in.isEmpty()) {
             int i = in.readInt();
             int j = in.readInt();

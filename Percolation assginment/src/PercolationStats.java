@@ -52,7 +52,7 @@ public class PercolationStats {
 		   int N = Integer.parseInt(args[0]);
 	       int T = Integer.parseInt(args[1]);
 		   
-	       PercolationStats stats = new PercolationStats(N, T);
+	       PercolationStats stats = new PercolationStats(N, T );
 	       System.out.println("mean                    = " + stats.mean());
 	       System.out.println("stddev                  = " + stats.stddev());
 	       System.out.println("95% confidence interval = " + stats.confidenceLo() + ", " + stats.confidenceHi());

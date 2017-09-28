@@ -1,133 +1,116 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-	private int N;
-    private int top;
+	private int n;
+    private int top,bottom;
     private WeightedQuickUnionUF uf;
-    private byte[] tile; // 0 - closed site, 1 - open site, 2 - full site;
-    private int sites;
+    private WeightedQuickUnionUF fuf;
+    private boolean[] tile; // false - closed site, true - open site;
+    private int openSites;
 	
 	public Percolation(int n){
-	   N= n;
-	   sites = 0;
+		//Return if n is less than 1
+	   if (n < 1) throw new IllegalArgumentException("N must be at least 1");
+	   
+	   this.n = n;
+	   openSites = 0;
 	   
 	   uf = new WeightedQuickUnionUF(n*n + 2);
-	   tile = new byte[n*n];  
+	   fuf = new WeightedQuickUnionUF(n*n + 1);
+	   tile = new boolean[n*n];  
 	   
-	   for(int i= 0 ; i < n*n; i++){
-		   tile[i] = 0;
-	   }
+	   top = n*n ; //virtual top
+	   bottom = n*n + 1; //virtual bottom
 	   
-	   top = n*n ;
-	   
-	   connectTop();
+	  
 	}
-	
-	private void connectTop(){
-		//System.out.println(N);
-		for (int i = 0; i < N ; i++){
-			uf.union(top, i);
-		}
-			
-		
-			
-	
-	}
-	
-	private boolean validate(int i) {
-	        if (i < 0 || i > N*N-1) 
+
+	private boolean validateIndex(int i) {
+	        if (i < 0 || i > n*n -1) 
 	        return false;
 	        
 	        return true;
 	    }
 	
 	public void open(int row, int col){
-		//if(percolates())return;
 		
-		int targetTile = encode(row,col);
+		if(row < 1 || col > n)
+			throw new IllegalArgumentException("Ilegal arguments");
 		
-		if (!validate(targetTile))
+		int currentTile = getIndex(row,col);
+		
+		if (!validateIndex(currentTile)) //if index is out of bounds return
 			return;
 		
-		if (tile[targetTile] == 0){
-			sites++;
-			tile[targetTile] = 1;
+		if (!isOpen(row,col)){
+			openSites++;
+			tile[currentTile] = true;
 		}
 		else return;
 		
-		int topTile = encode(row-1,col);
-		int botTile = encode(row+1,col);
+		int topTile,botTile,leftTile,rightTile;
 		
-		int leftTile;
-		int rightTile;
+		topTile = getIndex(row-1,col);
 		
-		if (col == 1) leftTile = -1 ;
-		else leftTile = encode(row,col-1);
-		
-		if(col == N ) rightTile = -1;
-		else  rightTile = encode(row,col+1);
-		
-		//System.out.println("target: "+targetTile+"Top: "+topTile +" Bot" + botTile+ " left" + leftTile + "right: " +rightTile);
-		
-		if(validate(topTile) && tile[topTile] != 0){
-			uf.union(targetTile, topTile);
+		if(row == 1){
+			fuf.union(currentTile,top);
+			uf.union(currentTile, top);
+		}else if(validateIndex(topTile) && tile[topTile]){
+			fuf.union(currentTile, topTile);
+			uf.union(currentTile, topTile);
 		}
+		
+		leftTile = getIndex(row,col-1);
+		
+		if(col-1 >= 1 && validateIndex(leftTile) && tile[leftTile]){
+			fuf.union(currentTile, leftTile);
+			uf.union(currentTile, leftTile);
+		}
+		
+		rightTile = getIndex(row,col+1);
+		if(col+1 <= n && validateIndex(rightTile) && tile[rightTile]){
+			fuf.union(currentTile, rightTile);
+			uf.union(currentTile, rightTile);
+		}
+		
+		botTile = getIndex(row+1,col);
+		if(row == n){
+			uf.union(currentTile, bottom);
+		}else if(validateIndex(botTile) && tile[botTile]){
+			fuf.union(currentTile, botTile);
+			uf.union(currentTile, botTile);
+		}
+		
 
-		if(validate(botTile) && tile[botTile] != 0){
-			uf.union(targetTile, botTile);
-		}
-		
-		if(validate(leftTile) && tile[leftTile] != 0){
-			uf.union(targetTile, leftTile);
-		}
-		
-		if(validate(rightTile) && tile[rightTile] != 0){
-			uf.union(targetTile, rightTile);
-		}
-		
-		
-		for(int i = 0; i < tile.length; i++){
-			if(tile[i] == 1){
-				if(uf.connected(top, i) ){
-					tile[i] = 2;
-				}
-			}
-		}
 		
 		// open site (row, col) if it is not open already
 		//if ()
 		
 	}
-	
 
 	
 	public boolean isOpen(int row, int col){
 		// is site (row, col) open?
-		return 0 != tile[encode(row,col)] ;
+		return tile[getIndex(row,col)] ;
 	}
 	public boolean isFull(int row, int col){
 		// is site (row, col) full?
-		return 2 == tile[encode(row,col)] ;
+		return fuf.connected(getIndex(row,col), top) ;
 	}
 	public int numberOfOpenSites(){
 		// number of open sites
-		return sites;
+		return openSites;
 	}
 	public boolean percolates(){
 		// does the system percolate?
-		for (int i = N*N -1; i >= (N-1)*N;i--){
-			if(uf.connected(top, i))
-				return true;
-		}
-		
-		return false;
+		return uf.connected(top, bottom);
 	}
 	
-	private int encode(int i, int j){
+	private int getIndex(int i, int j){
 		i--;
 		j--;
-		return i*N + j; 
+		return i*n + j; 
 	}
 	
-	
+
 }
