@@ -45,19 +45,72 @@ public class RandomizedQueue<Item>  {
 	public Item dequeue(){
 		if(isEmpty())return null;
 		
-		int a = StdRandom.uniform(0, size);
+		int pos = randomPos(this.size);
 		
-		for(int i = 0; i < a; i++){
+		Item rItem;
+		
+		if(pos == 0){
+			rItem = removeFirst();
+		}else if (pos == size - 1){
+			rItem = removeLast();
+		}else{
+			Node currentNode = head;
 			
+			
+			for(int i = 0; i < pos - 1; i++){
+				currentNode = currentNode.next;
+			}
+			
+			rItem = currentNode.next.item;
+			currentNode.next = currentNode.next.next; 
+		}
+		
+		return rItem;
+
 		}
 	
-	   // remove and return a random item
+	private Item removeFirst(){
+		if (isEmpty())return null;
+		
+		Item remItem = this.head.item;
+		head = head.next;
+		
+		size--;
+		return remItem;
+		
+	}
+	
+	private Item removeLast(){
+		if (isEmpty())return null;
+		
+		
+		Item rItem;
+		
+		if (size == 1){
+			rItem = head.item;
+			head = null;
+		}else{
+			Node currNode = head;
+			while(currNode.next.next != null)currNode = currNode.next;
+			rItem = currNode.next.item;
+			currNode.next = null;
 		}
-//	public Item sample(){
+		
+		
+		size--;
+		return rItem;
+	}
+	
+	
+	private int randomPos(int limit){
+		return StdRandom.uniform(0, limit);
+	}
+	
+	//public Item sample(){
 	   // return a random item (but do not remove it)
 		//}
 	//public Iterator<Item> iterator(){
 	   // return an independent iterator over items in random order
 		//return null;
-	//	}
+	//}
 }
