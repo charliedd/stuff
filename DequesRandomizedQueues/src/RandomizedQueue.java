@@ -1,6 +1,8 @@
+import java.util.Iterator;
+
 import edu.princeton.cs.algs4.StdRandom;
 
-public class RandomizedQueue<Item>  {
+public class RandomizedQueue<Item> implements Iterable<Item>{
 	int size;
 	Node head;
 	
@@ -46,6 +48,31 @@ public class RandomizedQueue<Item>  {
 		if(isEmpty())return null;
 		
 		int pos = randomPos(this.size);
+		Item rItem;
+		
+		if(pos == 0){
+			rItem = removeFirst();
+		}else if (pos == size - 1){
+			rItem = removeLast();
+		}else{
+			Node currentNode = head;
+			
+			
+			for(int i = 0; i < pos - 1; i++){
+				currentNode = currentNode.next;
+			}
+			
+			rItem = currentNode.next.item;
+			currentNode.next = currentNode.next.next; 
+		}
+		
+		size--;
+		return rItem;
+
+		}
+	
+	private Item remove(int pos){
+		if(isEmpty())return null;
 		
 		Item rItem;
 		
@@ -65,6 +92,7 @@ public class RandomizedQueue<Item>  {
 			currentNode.next = currentNode.next.next; 
 		}
 		
+		this.size--;
 		return rItem;
 
 		}
@@ -75,7 +103,6 @@ public class RandomizedQueue<Item>  {
 		Item remItem = this.head.item;
 		head = head.next;
 		
-		size--;
 		return remItem;
 		
 	}
@@ -97,7 +124,6 @@ public class RandomizedQueue<Item>  {
 		}
 		
 		
-		size--;
 		return rItem;
 	}
 	
@@ -106,11 +132,89 @@ public class RandomizedQueue<Item>  {
 		return StdRandom.uniform(0, limit);
 	}
 	
-	//public Item sample(){
+	public Item sample(){
+		if(isEmpty())return null;
+		
+		int pos = randomPos(this.size);
+		
+		Item rItem;
+		
+		if(pos == 0){
+			rItem = head.item;
+		}else if (pos == size - 1){
+			Node currNode = head;
+			while(currNode.next.next != null)currNode = currNode.next;
+			rItem = currNode.next.item;
+		}else{
+			Node currentNode = head;
+			
+			
+			for(int i = 0; i < pos - 1; i++){
+				currentNode = currentNode.next;
+			}
+			
+			rItem = currentNode.next.item;
+		}
+		
+		return rItem;
+
 	   // return a random item (but do not remove it)
-		//}
-	//public Iterator<Item> iterator(){
-	   // return an independent iterator over items in random order
-		//return null;
-	//}
+	}
+	
+	public Item posSample(int pos){
+		if(isEmpty())return null;
+		
+		Item rItem;
+		
+		if(pos == 0){
+			rItem = head.item;
+		}else if (pos == size - 1){
+			Node currNode = head;
+			while(currNode.next.next != null)currNode = currNode.next;
+			rItem = currNode.next.item;
+		}else{
+			Node currentNode = head;
+			
+			
+			for(int i = 0; i < pos - 1; i++){
+				currentNode = currentNode.next;
+			}
+			
+			rItem = currentNode.next.item;
+		}
+		
+		return rItem;
+
+	   // return a random item (but do not remove it)
+	}
+	
+	public Iterator<Item> iterator(){
+		 RandomizedQueue<Integer> tempPosQueue = new RandomizedQueue<Integer>();
+		 
+		 for(int i = 0; i < size; i++){
+			 tempPosQueue.enqueue(i);
+		 }
+		
+		return new Iterator<Item>() {
+			
+			RandomizedQueue<Integer> posQueue = tempPosQueue; 
+			
+            @Override
+            public boolean hasNext() {
+            	return !posQueue.isEmpty();
+            }
+
+            @Override
+            public Item next() {
+            	int pos = posQueue.dequeue();
+            	return posSample(pos);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+	}
+	
 }
