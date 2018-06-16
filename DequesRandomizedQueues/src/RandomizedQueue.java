@@ -3,10 +3,10 @@ import java.util.Iterator;
 import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item>{
-	int size;
-	Node head;
+	private int size;
+	private Node head;
 	
-	class Node{
+	private class Node{
 		Node next;
 		Item item;
 	}
@@ -27,6 +27,8 @@ public class RandomizedQueue<Item> implements Iterable<Item>{
 		}
 	
 	public void enqueue(Item item){
+		if(item == null)throw new java.lang.IllegalArgumentException();
+		
 		Node newNode = new Node();
 		newNode.item = item;
 		newNode.next = null;
@@ -45,7 +47,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>{
 		}
 	
 	public Item dequeue(){
-		if(isEmpty())return null;
+		if(isEmpty())throw new java.util.NoSuchElementException();
 		
 		int pos = randomPos(this.size);
 		Item rItem;
@@ -67,32 +69,6 @@ public class RandomizedQueue<Item> implements Iterable<Item>{
 		}
 		
 		size--;
-		return rItem;
-
-		}
-	
-	private Item remove(int pos){
-		if(isEmpty())return null;
-		
-		Item rItem;
-		
-		if(pos == 0){
-			rItem = removeFirst();
-		}else if (pos == size - 1){
-			rItem = removeLast();
-		}else{
-			Node currentNode = head;
-			
-			
-			for(int i = 0; i < pos - 1; i++){
-				currentNode = currentNode.next;
-			}
-			
-			rItem = currentNode.next.item;
-			currentNode.next = currentNode.next.next; 
-		}
-		
-		this.size--;
 		return rItem;
 
 		}
@@ -133,7 +109,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>{
 	}
 	
 	public Item sample(){
-		if(isEmpty())return null;
+		if(isEmpty())throw new java.util.NoSuchElementException();
 		
 		int pos = randomPos(this.size);
 		
@@ -161,7 +137,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>{
 	   // return a random item (but do not remove it)
 	}
 	
-	public Item posSample(int pos){
+	private Item posSample(int pos){
 		if(isEmpty())return null;
 		
 		Item rItem;
@@ -206,6 +182,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>{
 
             @Override
             public Item next() {
+            	if(!hasNext())throw new java.util.NoSuchElementException();
             	int pos = posQueue.dequeue();
             	return posSample(pos);
             }
