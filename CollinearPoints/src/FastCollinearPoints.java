@@ -31,6 +31,7 @@ public class FastCollinearPoints {
 			 
 			  
 			  if(pq == pr && pq == ps){
+				  
 				  Point[] temp = {points[0], points[1], points[2]};
 				  Arrays.sort(temp);
 				  System.out.println("Punto inicio: " + points[0] + "Punto final: " + points[2]);

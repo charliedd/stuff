@@ -6,7 +6,7 @@ public class BruteCollinearPoints {
    private LineSegment[] lines;
 	
    public BruteCollinearPoints(Point[] points){
-	   List<LineSegment> tempLines = new ArrayList<LineSegment>();
+	   List<LineSegment> tempLines=new ArrayList<LineSegment>();  
 	   int size = points.length;
 	   System.out.println(size);
 	   for(Point p : points){
@@ -22,16 +22,30 @@ public class BruteCollinearPoints {
 					  double pr = points[l].slopeTo(points[k]);
 					  double ps = points[l].slopeTo(points[j]);
 					  
-					  /*if(pq == pr && pq == ps){
+					  if(pq == pr && pq == ps){
 						  Point[] temp = {points[i], points[j], points[k], points[l]};
 						  Arrays.sort(temp);
-						  System.out.println("Punto inicio: " + temp[0] + "Punto final: " + temp[3]);
-						  tempLines.add(new LineSegment(temp[0], temp[3]));
-					  }*/
-					  System.out.println("[i]: " + points[i] + "[j]: " + points[j] + "[k]: " + points[k] + "[l]: " + points[l]);
+						 // System.out.println("Punto inicio: " + temp[0] + "Punto final: " + temp[3]);
+						  
+						  LineSegment newLine =  new LineSegment(temp[0], temp[3]);
+						  
+						  if(tempLines.isEmpty())tempLines.add(newLine);
+						  else{
+							  boolean exists = false;
+							  for(LineSegment line : tempLines){
+								  if(line.equals(newLine)){
+									  exists =true;
+									  break;
+								  }
+							  }
+							  if(!exists){
+								  tempLines.add(newLine);
+							  }
+						  }
+						  
+					  }
 				   }
-	   
-		
+					
 	  this.lines = tempLines.toArray(new LineSegment[tempLines.size()]);
 	   
 	 //  for(int i = 0; i < this.lines.length ; i++){
