@@ -2,7 +2,7 @@ import java.util.Iterator;
 
 public class Deque<Item> implements Iterable<Item> {
 	private int size;
-	private Node head,last;
+	private Node head;
 
 	
 	private class Node{
@@ -37,7 +37,6 @@ public class Deque<Item> implements Iterable<Item> {
 		
 		if (isEmpty()){
 			this.head = newNode;
-			this.last = newNode;
 		}else{
 			Node temp = head;
 			head = newNode;
@@ -50,7 +49,6 @@ public class Deque<Item> implements Iterable<Item> {
 	
 	public void addLast(Item item){
 		
-		if(item == null)throw new java.lang.IllegalArgumentException();
 		
 		Node newNode = new Node();
 		newNode.item = item;
@@ -60,11 +58,9 @@ public class Deque<Item> implements Iterable<Item> {
 		if (isEmpty()){
 			this.head = newNode;
 		}else{
-			//Node currNode = this.head;
-			//while(currNode.next != null)currNode = currNode.next;
-			Node oldLast = this.last;
-			last = newNode;
-			oldLast.next = last;
+			Node currNode = this.head;
+			while(currNode.next != null)currNode = currNode.next;
+			currNode.next = newNode;
 		}
 		
 		size++;
