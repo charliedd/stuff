@@ -2,51 +2,70 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class FastCollinearPoints {
 	private LineSegment[] lines;
 	
 	public FastCollinearPoints(Point[] points){
-		 List<LineSegment> tempLines = new ArrayList<LineSegment>();
+		List<Line> tempLines = new ArrayList<Line>();
+		List<LineSegment> uniqueLines = new ArrayList<LineSegment>();
+
+		   
 		int size = points.length;
 		
+		Point[] tempPoints = points.clone();
+		
 		for(int i = 0; i < size; i++){
-			List<Point> tempPoints = new ArrayList<Point>();
-			for(int j = 0; i < size; j++){
-				if (i == j)continue;
-				tempPoints.add(points[i]);
-			}
-			Point[] arrPoints = new Point[tempPoints.size()];
-			
-			arrPoints = tempPoints.toArray(arrPoints);
-			
-			Arrays.sort(arrPoints, points[i].slopeOrder());
-			
-			Point[] tempiPoints = {arrPoints[0],arrPoints[1],arrPoints[2]};
-			Arrays.sort(tempiPoints);
-			
-			 double pq =  points[i].slopeTo(tempiPoints[0]);
-			 double pr = points[i].slopeTo(tempiPoints[1]);
-			 double ps = points[i].slopeTo(tempiPoints[2]);
-			 
-			 
-			  
-			  if(pq == pr && pq == ps){
-				  
-				  Point[] temp = {points[0], points[1], points[2]};
-				  Arrays.sort(temp);
-				  System.out.println("Punto inicio: " + points[0] + "Punto final: " + points[2]);
-				  
-				  tempLines.add(new LineSegment(points[0], temp[2]));
-			  }
-			
-			
+			   Arrays.sort(tempPoints, points[i].slopeOrder());
+			   double pq = points[i].slopeTo(tempPoints[1]);
+			   double pr = points[i].slopeTo(tempPoints[2]);
+			   double ps = points[i].slopeTo(tempPoints[3]);
+			   
+			   
+				  if(pq == pr && pq == ps){
+					  System.out.println("bitch");
+					  Point[] temp = {points[i], tempPoints[0], tempPoints[1], tempPoints[2]};
+					  Arrays.sort(temp);
+					  
+					  if(tempLines.isEmpty()){
+						  tempLines.add(new Line(temp[0],temp[3]));
+					  }else{
+						  boolean exists = false;
+						  for(Line line : tempLines){
+							  if(temp[0] == line.start && temp[3] == line.end){
+								  exists = true;
+								  break;
+							  }
+						  }
+						  
+						  if (!exists){
+							  tempLines.add(new Line(temp[0],temp[3]));
+						  }
+					  }
+					
+				  }
 		}
 		
-		 lines = new LineSegment[tempLines.size()];
-		 this.lines = tempLines.toArray(this.lines);
+		 for(Line line : tempLines){
+			 uniqueLines.add(new LineSegment(line.start,line.end));
+		 }
+		 
+		 this.lines = uniqueLines.toArray(new LineSegment[uniqueLines.size()]);
+			 
+			 
+			
 		
-		// finds all line segments containing 4 or more points
+		
 	}
+	
+	private class Line{
+		   Point start,end;
+		   Line(Point s,Point e){
+			   start = s;
+			   end = e;
+		   }
+	   }
+	
     public int numberOfSegments(){
     	return this.lines.length;
     	// the number of line segments

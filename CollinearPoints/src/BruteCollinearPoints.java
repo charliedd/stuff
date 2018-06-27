@@ -9,12 +9,6 @@ public class BruteCollinearPoints {
 	   int size = points.length;
 	   List<Line> tempLines = new ArrayList<Line>();
 	   List<LineSegment> uniqueLines = new ArrayList<LineSegment>();
-
-	   
-	   System.out.println(size);
-	   for(Point p : points){
-		   System.out.println("P : " + p);
-	   }
 	   
 	   for(int i = 0; i < size-3; i++)
 		   for(int j = i + 1; j < size - 2; j++)
@@ -28,8 +22,6 @@ public class BruteCollinearPoints {
 					  if(pq == pr && pq == ps){
 						  Point[] temp = {points[i], points[j], points[k], points[l]};
 						  Arrays.sort(temp);
-						  //LineSegment newLine =  new LineSegment(temp[0], temp[3]);
-						  //tempLines.add(newLine);
 						  
 						  if(tempLines.isEmpty()){
 							  tempLines.add(new Line(temp[0],temp[3]));
@@ -55,11 +47,7 @@ public class BruteCollinearPoints {
 	 }
 	 
 	 this.lines = uniqueLines.toArray(new LineSegment[uniqueLines.size()]);
-	   
-	 //  for(int i = 0; i < this.lines.length ; i++){
-		//   System.out.println("Bitch" + lines[i]);
-	 //  }
-	   
+	  
    }
    
    private class Line{
