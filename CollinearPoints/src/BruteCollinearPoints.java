@@ -6,8 +6,11 @@ public class BruteCollinearPoints {
    private LineSegment[] lines;
 	
    public BruteCollinearPoints(Point[] points){
-	   List<LineSegment> tempLines=new ArrayList<LineSegment>();  
 	   int size = points.length;
+	   List<Line> tempLines = new ArrayList<Line>();
+	   List<LineSegment> uniqueLines = new ArrayList<LineSegment>();
+
+	   
 	   System.out.println(size);
 	   for(Point p : points){
 		   System.out.println("P : " + p);
@@ -25,28 +28,33 @@ public class BruteCollinearPoints {
 					  if(pq == pr && pq == ps){
 						  Point[] temp = {points[i], points[j], points[k], points[l]};
 						  Arrays.sort(temp);
-						 // System.out.println("Punto inicio: " + temp[0] + "Punto final: " + temp[3]);
+						  //LineSegment newLine =  new LineSegment(temp[0], temp[3]);
+						  //tempLines.add(newLine);
 						  
-						  LineSegment newLine =  new LineSegment(temp[0], temp[3]);
-						  
-						  if(tempLines.isEmpty())tempLines.add(newLine);
-						  else{
+						  if(tempLines.isEmpty()){
+							  tempLines.add(new Line(temp[0],temp[3]));
+						  }else{
 							  boolean exists = false;
-							  for(LineSegment line : tempLines){
-								  if(line.equals(newLine)){
-									  exists =true;
+							  for(Line line : tempLines){
+								  if(temp[0] == line.start && temp[3] == line.end){
+									  exists = true;
 									  break;
 								  }
 							  }
-							  if(!exists){
-								  tempLines.add(newLine);
+							  
+							  if (!exists){
+								  tempLines.add(new Line(temp[0],temp[3]));
 							  }
 						  }
-						  
+						
 					  }
 				   }
-					
-	  this.lines = tempLines.toArray(new LineSegment[tempLines.size()]);
+	   
+	 for(Line line : tempLines){
+		 uniqueLines.add(new LineSegment(line.start,line.end));
+	 }
+	 
+	 this.lines = uniqueLines.toArray(new LineSegment[uniqueLines.size()]);
 	   
 	 //  for(int i = 0; i < this.lines.length ; i++){
 		//   System.out.println("Bitch" + lines[i]);
@@ -54,7 +62,15 @@ public class BruteCollinearPoints {
 	   
    }
    
-   public           int numberOfSegments(){
+   private class Line{
+	   Point start,end;
+	   Line(Point s,Point e){
+		   start = s;
+		   end = e;
+	   }
+   }
+   
+   public int numberOfSegments(){
 	   // the number of line segments
 	   return this.lines.length;
    }
