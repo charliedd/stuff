@@ -1,70 +1,100 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class BruteCollinearPoints {
-   private LineSegment[] lines;
+	private LineSegment[] lineSegments;
 	
-   public BruteCollinearPoints(Point[] points){
-	   int size = points.length;
-	   List<Line> tempLines = new ArrayList<Line>();
-	   List<LineSegment> uniqueLines = new ArrayList<LineSegment>();
-	   
-	   for(int i = 0; i < size-3; i++)
-		   for(int j = i + 1; j < size - 2; j++)
-			   for(int k = j + 1; k < size - 1; k++)
-				   for(int l = k + 1; l < size; l++){
-					   
-					  double pq =  points[l].slopeTo(points[i]);
-					  double pr = points[l].slopeTo(points[k]);
-					  double ps = points[l].slopeTo(points[j]);
-					  
-					  if(pq == pr && pq == ps){
-						  Point[] temp = {points[i], points[j], points[k], points[l]};
-						  Arrays.sort(temp);
-						  
-						  if(tempLines.isEmpty()){
-							  tempLines.add(new Line(temp[0],temp[3]));
-						  }else{
-							  boolean exists = false;
-							  for(Line line : tempLines){
-								  if(temp[0] == line.start && temp[3] == line.end){
-									  exists = true;
-									  break;
-								  }
-							  }
-							  
-							  if (!exists){
-								  tempLines.add(new Line(temp[0],temp[3]));
-							  }
-						  }
-						
-					  }
-				   }
-	   
-	 for(Line line : tempLines){
-		 uniqueLines.add(new LineSegment(line.start,line.end));
-	 }
-	 
-	 this.lines = uniqueLines.toArray(new LineSegment[uniqueLines.size()]);
-	  
-   }
-   
-   private class Line{
-	   Point start,end;
-	   Line(Point s,Point e){
-		   start = s;
-		   end = e;
-	   }
-   }
-   
-   public int numberOfSegments(){
+	public BruteCollinearPoints(Point[] points){
+		
+		if (points == null)throw new java.lang.IllegalArgumentException();
+		
+		int size = points.length;
+		
+		if(points[size-1] == null)throw new java.lang.IllegalArgumentException();
+		
+		for (int i = 0;i < size - 1; i++ ){
+			if(points[i] == null)throw new java.lang.IllegalArgumentException();
+			for (int j = i + 1; j < size; j++){
+				if(points[i].compareTo(points[j]) == 0) throw new java.lang.IllegalArgumentException();
+			}
+		}
+		
+		
+		Arrays.sort(points);
+		
+		
+		int sizeTemp = size * size;
+		
+		int[] startPointPos = new int[sizeTemp];
+		int[] endPointPos = new int[sizeTemp];
+		
+		int posIndex = 0;
+
+		for(int i = 0; i < size-3; i++)
+			   for(int j = i + 1; j < size - 2; j++)
+				   for(int k = j + 1; k < size - 1; k++)
+					   for(int l = k + 1; l < size; l++){
+						   Point p = points[i];
+						   Point q = points[j];
+						   Point r = points[k];
+						   Point s = points[l];
+						   
+				
+						   if (isCollinear(p,q,r,s)){
+							   if (posIndex == 0){
+								   startPointPos[posIndex] = i;
+								   endPointPos[posIndex] = l;
+								   posIndex++;
+							   }else{
+								   boolean exists = false;
+								   for(int n = 0; n < posIndex; n++){
+									   if(startPointPos[n] == i && endPointPos[n] == l ){
+										   exists = true;
+										   break;
+									   }
+								   }
+								   
+								   if(!exists){
+									   startPointPos[posIndex] = i;
+									   endPointPos[posIndex] = l;
+									   posIndex++;
+								   }
+							   }
+							 
+						   }
+						   
+					   }
+		lineSegments = new LineSegment[posIndex];
+		
+		for (int i = 0; i < posIndex; i++){
+			
+			int startPos = startPointPos[i];
+			int endPos = endPointPos[i];
+			lineSegments[i] = new LineSegment(points[startPos],points[endPos]);
+			
+			}
+		
+	   // finds all line segments containing 4 points
+		}
+	public           int numberOfSegments(){
+		return lineSegments.length;
 	   // the number of line segments
-	   return this.lines.length;
-   }
-   
-   public LineSegment[] segments(){
-	   return this.lines;
+		}
+	public LineSegment[] segments(){
+		return this.lineSegments;
 	   // the line segments
-   }
+		}
+	
+	private boolean isCollinear(Point p,Point q,Point r, Point s){
+		double pq =  p.slopeTo(q);
+		double pr = p.slopeTo(r);
+		double ps = p.slopeTo(s);
+		
+		
+		if(pq == pr && pq == ps){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 }
