@@ -1,9 +1,12 @@
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class FastCollinearPoints {
 	private LineSegment[] lineSegments;
+	private List<Point> startPoints,endPoints;
 	
    public FastCollinearPoints(Point[] points){
 	   
@@ -11,65 +14,71 @@ public class FastCollinearPoints {
 		
 		int size = points.length;
 		
-		if(points[size-1] == null)throw new java.lang.IllegalArgumentException();
-		
-		for (int i = 0;i < size - 1; i++ ){
+		for(int i = 0; i < size; i++){
 			if(points[i] == null)throw new java.lang.IllegalArgumentException();
-			for (int j = i + 1; j < size; j++){
-				if(points[i].compareTo(points[j]) == 0) throw new java.lang.IllegalArgumentException();
-			}
 		}
 		
-		int nLines = 0;
-		Point[] startPoints = new Point[size * size];
-		Point[] endPoints = new Point[size * size];
+		List<LineSegment> lines = new ArrayList<LineSegment>();
+		startPoints = new ArrayList<Point>();
+		endPoints = new ArrayList<Point>();
+		
 		Point[] slopePoints = points.clone();
 		
 		for (int i = 0; i < size; i++){
 			Arrays.sort(slopePoints,points[i].slopeOrder());
-			System.out.println(Arrays.toString(slopePoints));
 			Point p = slopePoints[0];
-			for(int j=1 ; j < size - 2; j++){
+			
+			double oldSlope = Double.NEGATIVE_INFINITY;
+			
+			List<Point> posiblePoints = new ArrayList<Point>();
+			
+			for(int j=1 ; j < size; j++){
 				Point q = slopePoints[j];
-				Point r = slopePoints[j+1];
-				Point s = slopePoints[j+2];
+				if(p.compareTo(q) == 0 )throw new java.lang.IllegalArgumentException();
 				
+				double currSlope = p.slopeTo(q);
 				
-				if(isCollinear(p,q,r,s)){
-					
-					Point[] tempPoints = {p,q,r,s};
-				    Arrays.sort(tempPoints);
-					
-					
-						//boolean exists = false;
-						
-						//for(int n = 0; n < nLines; n++){
-							//if(startPoints[n].compareTo(tempPoints[0]) == 0 && endPoints[n].compareTo(tempPoints[3]) == 0 ){
-								//exists = true;
-							//}
-						//}
-						
-						//if (!exists){
-							System.out.println("YEAHHHHHHH    p: " + p + " q: " + q + " r: " + r + "s" + s);
-							startPoints[nLines] = tempPoints[0];
-							endPoints[nLines++] = tempPoints[3];
+				if(posiblePoints.isEmpty()){
+					posiblePoints.add(q);
+					oldSlope = currSlope;
+				}else{
+					if(oldSlope == currSlope){
+						posiblePoints.add(q);
+						if(j >= size - 1 && posiblePoints.size() >= 3 ){
+							Point[] tempPoints = posiblePoints.toArray(new Point[posiblePoints.size()]);
+							Arrays.sort(tempPoints);
+							int tempSize = tempPoints.length;
+							insertSegment(lines,tempPoints[0],tempPoints[tempSize-1]);
+							posiblePoints.clear();
 							
-							
-						//}else{
-						//	System.out.println("NOOOOOOOOo  p: " + p + " q: " + q + " r: " + r + "s" + s);
-						//}
+						}
+					}else{
+						if(posiblePoints.size() >= 3){
+							Point[] tempPoints = posiblePoints.toArray(new Point[posiblePoints.size()]);
+							Arrays.sort(tempPoints);
+							int tempSize = tempPoints.length;
+							insertSegment(lines,tempPoints[0],tempPoints[tempSize-1]);
+							}else{
+								posiblePoints.clear();
+								posiblePoints.add(q);
+								oldSlope = currSlope;
+							}
+					
+					}
+					
+					
 					
 				}
+				
+		
+				
+				
 			}
 			
 			
 		}
 		
-		lineSegments = new LineSegment[nLines];
-		for (int i = 0; i< nLines ; i++){
-			lineSegments[i] = new LineSegment(startPoints[i],endPoints[i]);
-		}
-		
+		lineSegments = lines.toArray(new LineSegment[lines.size()]);
 	
 	
 		
@@ -84,14 +93,19 @@ public class FastCollinearPoints {
 	   // the line segments
    }
    
-   private boolean isCollinear(Point p,Point q,Point r, Point s){
-		double pq =  p.slopeTo(q);
-		double pr = p.slopeTo(r);
-		double ps = p.slopeTo(s);
-		System.out.println(" pq: " + pq + " pr: "+ pr + " ps : "+ps);
+   private void insertSegment(List<LineSegment> lines, Point p, Point q){
+	   boolean exists = false;
 		
-		if(pq == pr && pq == ps)return true;
-		else return false;
-		
-	}
-}
+		for(int n = 0; n < lines.size(); n++){
+			if(startPoints.get(n).compareTo(p) == 0 && endPoints.get(n).compareTo(q) == 0 ){
+				exists = true;
+			}
+		}
+		if (!exists){
+			lines.add(new LineSegment(p,q));
+		    startPoints.add(p);
+			endPoints.add(q);	
+		}
+   }
+   
+ }

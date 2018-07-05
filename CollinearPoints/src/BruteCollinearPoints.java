@@ -18,8 +18,8 @@ public class BruteCollinearPoints {
 			}
 		}
 		
-		
-		Arrays.sort(points);
+		Point[] myPoints = points.clone();
+		Arrays.sort(myPoints);
 		
 		
 		int sizeTemp = size * size;
@@ -33,10 +33,10 @@ public class BruteCollinearPoints {
 			   for(int j = i + 1; j < size - 2; j++)
 				   for(int k = j + 1; k < size - 1; k++)
 					   for(int l = k + 1; l < size; l++){
-						   Point p = points[i];
-						   Point q = points[j];
-						   Point r = points[k];
-						   Point s = points[l];
+						   Point p = myPoints[i];
+						   Point q = myPoints[j];
+						   Point r = myPoints[k];
+						   Point s = myPoints[l];
 						   
 				
 						   if (isCollinear(p,q,r,s)){
@@ -69,7 +69,7 @@ public class BruteCollinearPoints {
 			
 			int startPos = startPointPos[i];
 			int endPos = endPointPos[i];
-			lineSegments[i] = new LineSegment(points[startPos],points[endPos]);
+			lineSegments[i] = new LineSegment(myPoints[startPos],myPoints[endPos]);
 			
 			}
 		
